@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>小谈和小陈 · 做题计时器 | </title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Poppins', 'Roboto', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            padding: 24px;
+        }
+
+        /* ========= 浅色模式 ========= */
+        body.light {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e6edf4 100%);
+            color: #0f2b3d;
+        }
+        body.light .timer-card {
+            background: rgba(255, 255, 255, 0.96);
+            box-shadow: 0 25px 45px -18px rgba(0, 0, 0, 0.2);
+        }
+        body.light .flip-unit {
+            background: #ffffff;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255,255,255,0.6);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+        }
+        body.light .separator {
+            color: #2c4b6e;
+        }
+        body.light .control-btn {
+            background: rgba(248, 250, 252, 0.9);
+            border: 1px solid #cfdee9;
+            color: #1e3a5f;
+        }
+        body.light .control-btn.primary {
+            background: #3b82f6;
+            border: none;
+            color: white;
+            box-shadow: 0 6px 14px rgba(59,130,246,0.25);
+        }
+        body.light .control-btn.danger {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+        }
+        body.light .status-badge {
+            background: #eef2ff;
+            color: #1e3a8a;
+        }
+        body.light .progress-bar-bg {
+            background: #e2e8f0;
+        }
+        body.light .progress-fill {
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+        }
+        body.light .mission-chip {
+            background: rgba(59,130,246,0.12);
+            color: #1e40af;
+            border: 1px solid rgba(59,130,246,0.2);
+        }
+        body.light .live-dot {
+            background: #10b981;
+            box-shadow: 0 0 0 2px rgba(16,185,129,0.3);
+        }
+        body.light .preset-btn {
+            background: #eef2ff;
+            border-color: #cbd5e1;
+            color: #1e3a8a;
+        }
+        /* 浅色模态框输入框 */
+        body.light .input-group input {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #0f2b3d;
+        }
+        body.light .input-group input:focus {
+            border-color: #3b82f6;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+        }
+
+        /* ========= 深色模式 ========= */
+        body.dark {
+            background: linear-gradient(135deg, #0a0f1c 0%, #0c1122 100%);
+            color: #eef2ff;
+        }
+        body.dark .timer-card {
+            background: rgba(12, 17, 29, 0.92);
+            backdrop-filter: blur(2px);
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 30px 45px -20px rgba(0,0,0,0.6);
+        }
+        body.dark .flip-unit {
+            background: #111624;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        body.dark .separator {
+            color: #a5b4fc;
+        }
+        body.dark .control-btn {
+            background: rgba(30, 36, 54, 0.9);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #e2e8ff;
+        }
+        body.dark .control-btn.primary {
+            background: #2563eb;
+            border: none;
+            color: white;
+            box-shadow: 0 6px 14px rgba(37,99,235,0.3);
+        }
+        body.dark .control-btn.danger {
+            background: #2c1a1a;
+            border: 1px solid #7f2a2a;
+            color: #fca5a5;
+        }
+        body.dark .status-badge {
+            background: #111827;
+            color: #a5b4fc;
+            border: 1px solid #2d3a5e;
+        }
+        body.dark .progress-bar-bg {
+            background: #1f2a3e;
+        }
+        body.dark .progress-fill {
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+        }
+        body.dark .mission-chip {
+            background: rgba(59,130,246,0.18);
+            color: #c4dcff;
+            border: 1px solid rgba(59,130,246,0.3);
+        }
+        body.dark .live-dot {
+            background: #34d399;
+            box-shadow: 0 0 0 2px rgba(52,211,153,0.3);
+        }
+        body.dark .preset-btn {
+            background: #1f2a3e;
+            border-color: #334155;
+            color: #cbd5e6;
+        }
+        body.dark .input-group input {
+            background: #111624;
+            border: 1px solid #2d3a5e;
+            color: #eef2ff;
+        }
+        body.dark .input-group input:focus {
+            border-color: #3b82f6;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.3);
+        }
+
+        /* 布局 */
+        .container {
+            width: 100%;
+            max-width: 1300px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+            gap: 20px;
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #2b6ef0, #9b4dff, #ff6b9d);
+            background-size: 200% auto;
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            transition: all 0.2s;
+        }
+        .right-tools {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .user-selector {
+            display: flex;
+            gap: 8px;
+            padding: 4px 12px;
+            border-radius: 60px;
+            backdrop-filter: blur(4px);
+        }
+        .user-btn {
+            border: none;
+            padding: 7px 20px;
+            border-radius: 40px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .user-btn.active {
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 2px 8px rgba(59,130,246,0.3);
+        }
+        .theme-toggle {
+            background: rgba(128, 128, 128, 0.12);
+            backdrop-filter: blur(8px);
+            border-radius: 60px;
+            padding: 7px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .timer-card {
+            border-radius: 56px;
+            padding: 32px 32px 40px;
+            margin-bottom: 32px;
+            transition: box-shadow 0.2s, border 0.2s;
+        }
+        .timer-card.running {
+            box-shadow: 0 0 0 2px rgba(59,130,246,0.2), 0 25px 45px -12px rgba(59,130,246,0.3);
+        }
+
+        .mission-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 28px;
+            padding: 0 8px;
+        }
+        .mission-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.25rem;
+            font-weight: 600;
+            padding: 8px 20px;
+            border-radius: 60px;
+            backdrop-filter: blur(4px);
+        }
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 5px 14px;
+            border-radius: 40px;
+            background: rgba(0,0,0,0.05);
+        }
+        .live-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #10b981;
+            animation: pulse 1.2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.4; transform: scale(0.8);}
+            100% { opacity: 1; transform: scale(1.2);}
+        }
+        .progress-section {
+            margin: 18px 12px 22px 12px;
+        }
+        .progress-bar-bg {
+            height: 8px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #e2e8f0;
+        }
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            border-radius: 12px;
+            transition: width 0.2s ease;
+        }
+
+        .flip-clock {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+            margin: 16px 0 12px;
+        }
+        .time-group {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .flip-unit {
+            width: 130px;
+            height: 168px;
+            position: relative;
+            border-radius: 28px;
+            overflow: hidden;
+            perspective: 1200px;
+            transition: all 0.2s;
+        }
+        .flip-card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+        .digit-front, .digit-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5.2rem;
+            font-weight: 800;
+            font-family: 'Monaco', 'JetBrains Mono', monospace;
+        }
+        .digit-back {
+            transform: rotateX(180deg);
+        }
+        .flip-unit.flipping .digit-front {
+            animation: flipFront 0.28s ease-in forwards;
+        }
+        .flip-unit.flipping .digit-back {
+            animation: flipBack 0.32s ease-out forwards;
+        }
+        @keyframes flipFront {
+            0% { transform: rotateX(0deg); }
+            100% { transform: rotateX(-180deg); }
+        }
+        @keyframes flipBack {
+            0% { transform: rotateX(180deg); }
+            100% { transform: rotateX(0deg); }
+        }
+        .separator {
+            font-size: 5rem;
+            font-weight: 600;
+            width: 35px;
+            text-align: center;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 24px;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-top: 12px;
+        }
+
+        .button-panel {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin: 28px 0 20px;
+        }
+        .control-btn {
+            border: none;
+            padding: 12px 28px;
+            border-radius: 60px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(4px);
+        }
+        .control-btn:active {
+            transform: translateY(1px);
+        }
+        .control-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .preset-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .preset-btn {
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid;
+            transition: 0.2s;
+            background: transparent;
+        }
+        .footer-motivation {
+            margin-top: 42px;
+            font-size: 0.85rem;
+            opacity: 0.8;
+            padding: 14px;
+            border-top: 1px solid rgba(128,128,128,0.2);
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .hotkey-hint {
+            font-size: 0.75rem;
+            background: rgba(0,0,0,0.05);
+            padding: 4px 12px;
+            border-radius: 40px;
+        }
+
+        /* ========= 统一模态框样式 ========= */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            animation: fadeIn 0.2s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .modal-content {
+            background: var(--modal-bg, #fff);
+            border-radius: 48px;
+            padding: 32px 36px;
+            width: 90%;
+            max-width: 560px;
+            text-align: center;
+            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.3);
+            transform: scale(0.96);
+            animation: modalPop 0.2s ease forwards;
+        }
+        @keyframes modalPop {
+            to { transform: scale(1); }
+        }
+        /* 音色弹窗宽一些 */
+        .voice-modal .modal-content {
+            max-width: 760px;
+        }
+        body.light .modal-content {
+            background: #ffffff;
+            color: #1a2c3e;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        body.dark .modal-content {
+            background: #121212;
+            color: #eef2ff;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .modal-content h3 {
+            font-size: 1.8rem;
+            margin-bottom: 24px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .modal-content p {
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 28px;
+        }
+        .input-group {
+            text-align: left;
+            margin-bottom: 24px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.3px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 14px 20px;
+            border-radius: 60px;
+            font-size: 1rem;
+            transition: all 0.2s;
+            font-family: inherit;
+            background: transparent;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 28px;
+        }
+        .modal-buttons button {
+            padding: 12px 28px;
+            border-radius: 60px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+            font-size: 0.95rem;
+            font-family: inherit;
+        }
+        .modal-buttons button.primary {
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 2px 8px rgba(59,130,246,0.3);
+        }
+        .modal-buttons button.secondary {
+            background: rgba(128, 128, 128, 0.15);
+            color: inherit;
+            border: 1px solid rgba(128,128,128,0.3);
+        }
+        .modal-buttons button.danger {
+            background: #dc2626;
+            color: white;
+        }
+        /* 统计弹窗专用 */
+        .stat-modal .modal-content {
+            max-width: 600px;
+            text-align: left;
+        }
+        .stat-grid {
+            margin: 20px 0;
+        }
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(128,128,128,0.2);
+            font-size: 1rem;
+        }
+        .encourage {
+            margin-top: 24px;
+            padding: 16px;
+            border-radius: 32px;
+            text-align: center;
+            background: rgba(59, 130, 246, 0.12);
+            font-weight: 500;
+        }
+        /* 历史弹窗表格 */
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin-top: 16px;
+        }
+        .history-table th,
+        .history-table td {
+            padding: 10px 6px;
+            border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+            text-align: left;
+        }
+        .history-table th {
+            font-weight: 700;
+            color: #3b82f6;
+        }
+        .delete-record-btn {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.2s;
+            padding: 4px 8px;
+            border-radius: 30px;
+        }
+        .delete-record-btn:hover {
+            background: rgba(239, 68, 68, 0.15);
+            transform: scale(1.05);
+        }
+        #historyListContainer {
+            max-height: 420px;
+            overflow-y: auto;
+            margin: 12px 0 8px;
+            border-radius: 28px;
+        }
+        /* 确认弹窗特殊 */
+        #confirmModal .modal-content {
+            max-width: 440px;
+        }
+
+        /* 音色列表样式 */
+        .voice-list {
+            max-height: 460px;
+            overflow-y: auto;
+            margin: 16px 0;
+            text-align: left;
+        }
+        .voice-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            margin: 8px 0;
+            border-radius: 60px;
+            background: rgba(128, 128, 128, 0.06);
+            transition: 0.2s;
+            border: 1px solid transparent;
+        }
+        body.light .voice-item {
+            background: #f8fafc;
+            border-color: #e2e8f0;
+        }
+        body.dark .voice-item {
+            background: #1e293b;
+            border-color: #334155;
+        }
+        .voice-item.active-voice {
+            border: 1px solid #3b82f6;
+            background: rgba(59, 130, 246, 0.15);
+        }
+        .voice-info {
+            flex: 1;
+            font-weight: 500;
+        }
+        .voice-name {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        .voice-lang {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-left: 8px;
+        }
+        .voice-actions {
+            display: flex;
+            gap: 12px;
+        }
+        .voice-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 8px 12px;
+            border-radius: 40px;
+            transition: 0.2s;
+        }
+        .voice-actions .preview-btn {
+            color: #3b82f6;
+        }
+        .voice-actions .select-btn {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 6px 14px;
+        }
+        body.dark .voice-actions .select-btn {
+            background: #2563eb30;
+            color: #60a5fa;
+        }
+        .voice-loading {
+            text-align: center;
+            padding: 30px;
+        }
+
+        /* toast */
+        .toast-message {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            z-index: 2100;
+            pointer-events: none;
+            animation: toastFade 2.5s ease forwards;
+            white-space: nowrap;
+        }
+        @keyframes toastFade {
+            0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            85% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+        }
+        @media (max-width: 780px) {
+            .flip-unit { width: 80px; height: 108px; }
+            .digit-front, .digit-back { font-size: 3.2rem; }
+            .separator { font-size: 2.8rem; width: 20px; }
+            .control-btn { padding: 8px 18px; font-size: 0.85rem; }
+            .modal-content { padding: 28px 24px; }
+            .modal-content h3 { font-size: 1.5rem; }
+            .history-table th, .history-table td { font-size: 0.75rem; padding: 6px 4px; }
+            .voice-item { flex-direction: column; align-items: stretch; gap: 12px; }
+            .voice-actions { justify-content: flex-end; }
+        }
+    </style>
+</head>
+<body class="light">
+<div class="container">
+    <div class="header">
+        <h1>📖 小谈·小陈 丨 做题计时器</h1>
+        <div class="right-tools">
+            <div class="user-selector" id="userSelector">
+                <button class="user-btn" data-user="谈伟">谈伟</button>
+                <button class="user-btn" data-user="陈曦">陈曦</button>
+            </div>
+            <div class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i> <span>深色模式</span></div>
+        </div>
+    </div>
+
+    <div class="timer-card" id="timerCard">
+        <div class="mission-bar">
+            <div class="mission-chip"><i class="fas fa-bullseye"></i> <span id="targetDisplay">— 分钟 · — 题</span></div>
+            <div class="live-indicator" id="liveIndicator" style="display: none;"><span class="live-dot"></span> <span>正在计时</span></div>
+        </div>
+        <div class="flip-clock" id="flipClock">
+            <div class="time-group"><div class="flip-unit" data-digit="hourTens"></div><div class="flip-unit" data-digit="hourOnes"></div></div>
+            <span class="separator">:</span>
+            <div class="time-group"><div class="flip-unit" data-digit="minTens"></div><div class="flip-unit" data-digit="minOnes"></div></div>
+            <span class="separator">:</span>
+            <div class="time-group"><div class="flip-unit" data-digit="secTens"></div><div class="flip-unit" data-digit="secOnes"></div></div>
+        </div>
+        <div class="progress-section"><div class="progress-bar-bg"><div class="progress-fill" id="progressFill" style="width: 0%;"></div></div></div>
+        <div class="status-badge"><i class="fas fa-info-circle"></i> <span id="statusText">✨ 设定分钟与题量</span></div>
+    </div>
+
+    <div class="preset-group" id="presetGroup">
+        <button class="preset-btn" data-min="25" data-q="20">⚡ 逻辑判断20题</button>
+        <button class="preset-btn" data-min="30" data-q="20">⚡ 资料分析20题</button>
+        <button class="preset-btn" data-min="25" data-q="20">⚡ 言语理解20题</button>
+        <button class="preset-btn" data-min="180" data-q="5">⚡ 申论完整刷题</button>
+    </div>
+
+    <div class="button-panel">
+        <button class="control-btn" id="inputTimeBtn"><i class="fas fa-keyboard"></i> 输入</button>
+        <button class="control-btn primary" id="startPauseBtn"><i class="fas fa-play"></i> 开始</button>
+        <button class="control-btn danger" id="stopBtn"><i class="fas fa-stop"></i> 结束</button>
+        <button class="control-btn" id="resetBtn"><i class="fas fa-undo-alt"></i> 重置</button>
+        <button class="control-btn" id="historyBtn"><i class="fas fa-history"></i> 历史</button>
+        <button class="control-btn" id="voiceBtn"><i class="fas fa-microphone-alt"></i> 音色</button>
+    </div>
+    <div class="footer-motivation">
+        <span>🌟 星光不问赶路人·时光不负有心人</span>
+        <span class="hotkey-hint"><i class="fas fa-keyboard"></i> 空格 开始/暂停 · R 重置</span>
+    </div>
+</div>
+
+<!-- 输入弹窗 -->
+<div id="inputModal" class="modal"><div class="modal-content"><h3><i class="fas fa-hourglass-half"></i> 设定做题参数</h3><div class="input-group"><label>⏱️ 做题时长（分钟）</label><input type="number" id="minutesInput" placeholder="例如：30" min="1" max="1440"></div><div class="input-group"><label>📚 目标题量（道）</label><input type="number" id="questionsInput" placeholder="例如：30" min="1" max="150"></div><div class="modal-buttons"><button id="confirmInputBtn" class="primary">确认</button><button id="cancelInputBtn" class="secondary">取消</button></div></div></div>
+<!-- 统计弹窗 -->
+<div id="statModal" class="modal stat-modal"><div class="modal-content" id="statContent"></div></div>
+<!-- 历史弹窗 -->
+<div id="historyModal" class="modal"><div class="modal-content" style="max-width: 720px;"><h3><i class="fas fa-database"></i> 学习历史 · <span id="historyUserName">谈伟</span></h3><div id="historyListContainer" style="max-height: 420px; overflow-y: auto;"></div><div class="modal-buttons"><button id="clearHistoryBtn" class="danger" style="background:#b91c1c;color:white;">清空全部历史</button><button id="closeHistoryBtn" class="secondary">关闭</button></div></div></div>
+<!-- 确认弹窗 -->
+<div id="confirmModal" class="modal"><div class="modal-content"><h3 id="confirmTitle">确认操作</h3><p id="confirmMessage"></p><div class="modal-buttons"><button id="confirmOkBtn" class="primary">确定</button><button id="confirmCancelBtn" class="secondary">取消</button></div></div></div>
+
+<!-- 音色选择弹窗 -->
+<div id="voiceModal" class="modal voice-modal"><div class="modal-content"><h3><i class="fas fa-head-side-vr"></i> 选择语音音色</h3><p style="margin-bottom: 8px; font-size: 0.85rem;">✨ 挑选喜欢的播报声音，点击试听，选中后即时生效</p><div id="voiceListContainer" class="voice-list"><div class="voice-loading"><i class="fas fa-spinner fa-pulse"></i> 加载语音列表中...</div></div><div class="modal-buttons"><button id="closeVoiceBtn" class="secondary">关闭</button></div></div></div>
+
+<script>
+    // ----- 翻页时钟 (保持不变) -----
+    class FlipDigitController {
+        constructor(el) { this.element = el; this.currentValue = 0; this._create(); }
+        _create() { this.element.innerHTML = `<div class="flip-card"><div class="digit-front">0</div><div class="digit-back">0</div></div>`; this.front = this.element.querySelector('.digit-front'); this.back = this.element.querySelector('.digit-back'); }
+        setValue(newValue, animate = true) { if (this.currentValue === newValue) return; const old = this.currentValue; this.currentValue = newValue; if (!animate) { this.front.innerText = newValue; this.back.innerText = newValue; return; } this.back.innerText = newValue; this.front.innerText = old; this.element.classList.add('flipping'); const onEnd = () => { this.element.classList.remove('flipping'); this.front.innerText = newValue; this.element.removeEventListener('animationend', onEnd); }; this.element.addEventListener('animationend', onEnd); }
+    }
+    const units = {}; document.querySelectorAll('.flip-unit').forEach(el => { units[el.getAttribute('data-digit')] = new FlipDigitController(el); });
+    function updateDisplay(totalSeconds, animate = true) { if (totalSeconds < 0) totalSeconds = 0; let hrs = Math.floor(totalSeconds / 3600), mins = Math.floor((totalSeconds % 3600) / 60), secs = totalSeconds % 60; if (hrs > 99) hrs = 99; const h = hrs.toString().padStart(2,'0'), m = mins.toString().padStart(2,'0'), s = secs.toString().padStart(2,'0'); units.hourTens.setValue(parseInt(h[0]), animate); units.hourOnes.setValue(parseInt(h[1]), animate); units.minTens.setValue(parseInt(m[0]), animate); units.minOnes.setValue(parseInt(m[1]), animate); units.secTens.setValue(parseInt(s[0]), animate); units.secOnes.setValue(parseInt(s[1]), animate); }
+
+    // ----- 全局变量 (计时器核心)-----
+    let timerInterval = null, currentMode = 'idle', previousMode = null;
+    let remainingSeconds = 0, initialTotalSeconds = 0, countupBaseSeconds = 0, countupElapsed = 0;
+    let targetQuestions = 0, startTimestamp = null, hasTenPercentNotified = false;
+    let currentUser = "谈伟", pausedRemaining = 0, pausedCountupBase = 0, pausedCountupElapsed = 0;
+    const startPauseBtn = document.getElementById('startPauseBtn'), stopBtn = document.getElementById('stopBtn'), resetBtn = document.getElementById('resetBtn');
+    const statusTextSpan = document.getElementById('statusText'), missionTargetSpan = document.getElementById('targetDisplay');
+    const progressFill = document.getElementById('progressFill'), liveIndicator = document.getElementById('liveIndicator'), timerCard = document.getElementById('timerCard');
+    // 音频beep
+    let audioCtx = null, audioAllowed = false;
+    function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if (audioCtx.state === 'suspended') return audioCtx.resume().then(()=>{audioAllowed=true;}); audioAllowed=true; return Promise.resolve(); }
+    function playBeep() { if(!audioCtx || !audioAllowed) return; const osc = audioCtx.createOscillator(), gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine'; osc.frequency.value = 880; gain.gain.setValueAtTime(0.2, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime+0.4); osc.start(); osc.stop(audioCtx.currentTime+0.3);}
+    async function playTripleBeep() { for(let i=0;i<3;i++) { playBeep(); await new Promise(r=>setTimeout(r,350));} }
+
+    // ========= 语音增强模块 (支持音色选择) =========
+    let selectedVoice = null;          // 存储当前选中的voice对象
+    let availableVoices = [];
+    const VOICE_STORAGE_KEY = 'timerSelectedVoiceURI';
+    function loadStoredVoice() {
+        const storedURI = localStorage.getItem(VOICE_STORAGE_KEY);
+        if(storedURI && availableVoices.length) {
+            const found = availableVoices.find(v => v.voiceURI === storedURI);
+            if(found) { selectedVoice = found; return true; }
+        }
+        // 默认找一个中文女声或任意中文语音
+        const defaultChinese = availableVoices.find(v => v.lang.includes('zh') && (v.name.includes('Tingting') || v.name.includes('Xiaoxiao') || v.name.includes('Meijia') || v.name.includes('晓')) );
+        if(defaultChinese) selectedVoice = defaultChinese;
+        else if(availableVoices.length) selectedVoice = availableVoices.find(v => v.lang.includes('zh')) || availableVoices[0];
+        if(selectedVoice) localStorage.setItem(VOICE_STORAGE_KEY, selectedVoice.voiceURI);
+        return !!selectedVoice;
+    }
+    function saveSelectedVoice(voice) {
+        selectedVoice = voice;
+        if(voice) localStorage.setItem(VOICE_STORAGE_KEY, voice.voiceURI);
+        else localStorage.removeItem(VOICE_STORAGE_KEY);
+    }
+    // 优化的 speakText：使用选定音色
+    function speakText(text) {
+        if(!window.speechSynthesis) return;
+        window.speechSynthesis.cancel(); // 避免重叠
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'zh-CN';
+        utterance.rate = 0.9;
+        if(selectedVoice) utterance.voice = selectedVoice;
+        window.speechSynthesis.speak(utterance);
+    }
+    // 试听指定语音
+    function previewVoice(voice) {
+        if(!voice || !window.speechSynthesis) return;
+        window.speechSynthesis.cancel();
+        const testMsg = new SpeechSynthesisUtterance("你好，小谈和小陈，现在你听到的是试听语音，希望你喜欢这个音色。");
+        testMsg.voice = voice;
+        testMsg.lang = voice.lang;
+        testMsg.rate = 0.9;
+        window.speechSynthesis.speak(testMsg);
+    }
+    // 渲染音色列表
+    function renderVoiceList() {
+        const container = document.getElementById('voiceListContainer');
+        if(!availableVoices.length) {
+            container.innerHTML = '<div class="voice-loading"><i class="fas fa-exclamation-triangle"></i> 暂未获取到语音，请刷新或检查浏览器支持</div>';
+            return;
+        }
+        let html = '';
+        availableVoices.forEach(voice => {
+            const isActive = selectedVoice && selectedVoice.voiceURI === voice.voiceURI;
+            const activeClass = isActive ? 'active-voice' : '';
+            html += `
+                <div class="voice-item ${activeClass}" data-voice-uri="${voice.voiceURI}">
+                    <div class="voice-info">
+                        <span class="voice-name">${voice.name}</span>
+                        <span class="voice-lang">${voice.lang}</span>
+                    </div>
+                    <div class="voice-actions">
+                        <button class="preview-btn" data-voice-uri="${voice.voiceURI}" title="试听"><i class="fas fa-play-circle"></i> 试听</button>
+                        <button class="select-btn" data-voice-uri="${voice.voiceURI}">${isActive ? '✓ 使用中' : '选用'}</button>
+                    </div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+        // 绑定事件
+        container.querySelectorAll('.preview-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const uri = btn.getAttribute('data-voice-uri');
+                const voice = availableVoices.find(v => v.voiceURI === uri);
+                if(voice) previewVoice(voice);
+            });
+        });
+        container.querySelectorAll('.select-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const uri = btn.getAttribute('data-voice-uri');
+                const voice = availableVoices.find(v => v.voiceURI === uri);
+                if(voice) {
+                    saveSelectedVoice(voice);
+                    renderVoiceList(); // 刷新高亮
+                    showToast(`已选用音色：${voice.name}`);
+                    // 可播放一句生效提示
+                    const confirmMsg = new SpeechSynthesisUtterance(`音色已切换为${voice.name}`);
+                    confirmMsg.voice = voice;
+                    confirmMsg.lang = voice.lang;
+                    window.speechSynthesis.cancel();
+                    window.speechSynthesis.speak(confirmMsg);
+                }
+            });
+        });
+    }
+    function initVoiceManager() {
+        if(!window.speechSynthesis) { console.warn("浏览器不支持语音合成"); return; }
+        const updateVoices = () => {
+            availableVoices = window.speechSynthesis.getVoices().filter(v => v.lang.includes('zh') || v.lang.includes('CN') || v.lang.includes('cmn'));
+            if(availableVoices.length === 0) availableVoices = window.speechSynthesis.getVoices(); // fallback all
+            loadStoredVoice();
+            renderVoiceList();
+        };
+        window.speechSynthesis.onvoiceschanged = updateVoices;
+        setTimeout(updateVoices, 200); // 立即尝试一次
+    }
+    // 打开音色弹窗刷新列表
+    function openVoiceModal() {
+        const modal = document.getElementById('voiceModal');
+        if(availableVoices.length) renderVoiceList();
+        else initVoiceManager(); // 强制刷新
+        modal.style.display = 'flex';
+    }
+    // ----- 原有计时函数保持不变，但保留speakText替换为增强版------
+    function stopTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } }
+    function tick() { if (currentMode === 'countdown') { if (remainingSeconds <= 0) { clearInterval(timerInterval); currentMode = 'countup'; countupBaseSeconds = initialTotalSeconds; countupElapsed = 0; hasTenPercentNotified = false; updateDisplay(countupBaseSeconds + countupElapsed, true); playTripleBeep(); speakText("倒计时结束，开始统计做题总时长"); timerInterval = setInterval(tick, 1000); updateMetaUI(); return; } remainingSeconds--; updateDisplay(remainingSeconds, true); if (!hasTenPercentNotified && initialTotalSeconds > 0 && remainingSeconds / initialTotalSeconds <= 0.1 && remainingSeconds > 0) { hasTenPercentNotified = true; playTripleBeep(); const mins = Math.floor(remainingSeconds / 60), secs = remainingSeconds % 60; speakText(`剩余${mins}分钟${secs}秒`); } updateMetaUI(); } else if (currentMode === 'countup') { countupElapsed++; updateDisplay(countupBaseSeconds + countupElapsed, true); updateMetaUI(); } }
+    function startTimer() { if (timerInterval) clearInterval(timerInterval); timerInterval = setInterval(tick, 1000); }
+    function updateMetaUI() { /* 与原逻辑相同，略保留核心 */ const minsSet = Math.floor(initialTotalSeconds / 60); missionTargetSpan.innerText = `${minsSet}分钟 · ${targetQuestions}题`; if (currentMode === 'countdown') { let percent = ((initialTotalSeconds - remainingSeconds) / initialTotalSeconds) * 100; percent = Math.min(100, Math.max(0, percent)); progressFill.style.width = `${percent}%`; statusTextSpan.innerText = `⏳ 倒计时中 · 已完成 ${Math.floor(percent)}%`; } else if (currentMode === 'countup') { progressFill.style.width = `100%`; statusTextSpan.innerText = `📈 超时统计中 · 专注延长时间`; } else if (currentMode === 'paused') { if (previousMode === 'countdown') { let percent = ((initialTotalSeconds - remainingSeconds) / initialTotalSeconds) * 100; percent = Math.min(100, Math.max(0, percent)); progressFill.style.width = `${percent}%`; statusTextSpan.innerText = `⏸ 暂停 · 已完成 ${Math.floor(percent)}%`; } else { progressFill.style.width = `100%`; statusTextSpan.innerText = `⏸ 暂停`; } } else if (currentMode === 'finished') statusTextSpan.innerText = `✅ 已完成 · 重置开始新任务`; else { progressFill.style.width = `0%`; statusTextSpan.innerText = `✨ 设定目标，点击开始`; } const isActive = (currentMode === 'countdown' || currentMode === 'countup'); liveIndicator.style.display = isActive ? 'flex' : 'none'; timerCard.classList.toggle('running', isActive); startPauseBtn.innerHTML = (currentMode === 'countdown' || currentMode === 'countup') ? '<i class="fas fa-pause"></i> 暂停' : (currentMode === 'paused' ? '<i class="fas fa-play"></i> 继续' : '<i class="fas fa-play"></i> 开始'); }
+    async function handleStartPause() { await initAudio(); if (currentMode === 'idle' || currentMode === 'finished') { if (remainingSeconds <= 0 && initialTotalSeconds === 0) { showToast('请先输入时间/题量'); return; } if (remainingSeconds <= 0 && initialTotalSeconds > 0) { remainingSeconds = initialTotalSeconds; updateDisplay(remainingSeconds, false); } hasTenPercentNotified = false; currentMode = 'countdown'; startTimestamp = new Date(); startTimer(); updateMetaUI(); } else if (currentMode === 'countdown' || currentMode === 'countup') { stopTimer(); previousMode = currentMode; if (currentMode === 'countdown') pausedRemaining = remainingSeconds; else { pausedCountupBase = countupBaseSeconds; pausedCountupElapsed = countupElapsed; } currentMode = 'paused'; updateMetaUI(); } else if (currentMode === 'paused') { if (previousMode === 'countdown') { remainingSeconds = pausedRemaining; currentMode = 'countdown'; startTimer(); } else if (previousMode === 'countup') { countupBaseSeconds = pausedCountupBase; countupElapsed = pausedCountupElapsed; currentMode = 'countup'; startTimer(); } updateMetaUI(); } }
+    async function fullReset() { if (currentMode !== 'idle') { const ok = await showConfirm('重置计时器', '重置会丢失当前进度，确定吗？'); if (!ok) return; } stopTimer(); currentMode = 'idle'; remainingSeconds = initialTotalSeconds; countupBaseSeconds = 0; countupElapsed = 0; hasTenPercentNotified = false; startTimestamp = null; updateDisplay(initialTotalSeconds > 0 ? initialTotalSeconds : 0, false); updateMetaUI(); }
+    async function setPreset(minutes, questions) { if (currentMode !== 'idle') { const ok = await showConfirm('运行中', '计时运行中，重置后再设定？'); if (ok) await fullReset(); else return; } initialTotalSeconds = minutes * 60; remainingSeconds = initialTotalSeconds; targetQuestions = questions; currentMode = 'idle'; stopTimer(); updateDisplay(remainingSeconds, false); updateMetaUI(); saveUserSettings(currentUser, minutes, questions); showToast(`⚡ 已预设 ${minutes}分钟 / ${questions}题`); }
+    async function switchUser(newUser) { if (currentUser === newUser) return; if (currentMode !== 'idle') { const confirm = await showConfirm('切换用户', `当前计时进行中，切换将重置进度并加载${newUser}的预设，确定吗？`); if (!confirm) return; await fullReset(); } currentUser = newUser; localStorage.setItem('timerSelectedUser', currentUser); document.querySelectorAll('.user-btn').forEach(btn => btn.classList.toggle('active', btn.getAttribute('data-user') === currentUser)); applyUserSettings(currentUser); showToast(`👤 已切换至 ${currentUser}`); }
+    function applyUserSettings(user) { const settings = loadUserSettings(user); let mins = 30, qs = 30; if(settings) { mins = settings.mins; qs = settings.qs; } initialTotalSeconds = mins * 60; remainingSeconds = initialTotalSeconds; targetQuestions = qs; currentMode = 'idle'; stopTimer(); updateDisplay(remainingSeconds, false); updateMetaUI(); saveUserSettings(user, mins, qs); }
+    function saveUserSettings(user, minutes, questions) { localStorage.setItem(`userSettings_${user}`, JSON.stringify({ targetMinutes: minutes, targetQuestions: questions })); }
+    function loadUserSettings(user) { const raw = localStorage.getItem(`userSettings_${user}`); if(raw) { const { targetMinutes, targetQuestions } = JSON.parse(raw); return { mins: targetMinutes, qs: targetQuestions }; } return null; }
+    function showToast(msg) { const toast = document.createElement('div'); toast.className = 'toast-message'; toast.innerText = msg; document.body.appendChild(toast); setTimeout(() => toast.remove(), 2500); }
+    // 历史相关快速实现（复用原有）
+    function getHistoryKey(user) { return `studyHistory_${user}`; }
+    function loadHistory(user) { const raw = localStorage.getItem(getHistoryKey(user)); return raw ? JSON.parse(raw) : []; }
+    function saveHistory(user, records) { localStorage.setItem(getHistoryKey(user), JSON.stringify(records.slice(-100))); }
+    function addHistoryRecord(user, record) { const records = loadHistory(user); records.unshift(record); saveHistory(user, records); showToast(`📝 记录已保存 (${user})`); }
+    function clearAllHistory(user) { saveHistory(user, []); if(document.getElementById('historyModal').style.display === 'flex') renderHistoryModal(user); showToast(`🗑️ 已清空${user}的历史记录`); }
+    function deleteHistoryItem(user, index) { const records = loadHistory(user); records.splice(index,1); saveHistory(user, records); renderHistoryModal(user); showToast(`已删除一条记录`); }
+    function renderHistoryModal(user) { const records = loadHistory(user); const container = document.getElementById('historyListContainer'); document.getElementById('historyUserName').innerText = user; if(records.length===0) { container.innerHTML = '<div style="padding:32px;text-align:center;opacity:0.7;">✨ 暂无学习记录，开始计时吧～</div>'; return; } let html = `<table class="history-table"><thead><tr><th>日期</th><th>时长(分)</th><th>题量</th><th>平均(秒/题)</th><th></th></tr></thead><tbody>`; records.forEach((r,idx)=>{ html += `<tr><td>${r.date}</td><td>${r.durationMin}</td><td>${r.questions}</td><td>${r.avgSec}</td><td><button class="delete-record-btn" data-idx="${idx}"><i class="fas fa-trash-alt"></i></button></td></tr>`; }); html += `</tbody></table>`; container.innerHTML = html; container.querySelectorAll('.delete-record-btn').forEach(btn=>{ btn.addEventListener('click',(e)=>{ const idx = parseInt(btn.getAttribute('data-idx')); if(confirm(`删除这条记录？`)) deleteHistoryItem(user, idx); }); }); }
+    async function finishAndSave() { if (currentMode === 'idle') { showToast('暂无进行中的计时'); return; } const confirmResult = await showConfirm('结束本次练习', '确定结束并保存本次学习记录吗？'); if (!confirmResult) return; let totalElapsed = 0; const endTime = new Date(); if (currentMode === 'countdown') totalElapsed = initialTotalSeconds - remainingSeconds; else if (currentMode === 'countup') totalElapsed = countupBaseSeconds + countupElapsed; else if (currentMode === 'paused') { if (previousMode === 'countdown') totalElapsed = initialTotalSeconds - pausedRemaining; else if (previousMode === 'countup') totalElapsed = pausedCountupBase + pausedCountupElapsed; else totalElapsed = 0; } else if (currentMode === 'finished') { showToast('已经结束，请重置'); return; } if (totalElapsed < 0) totalElapsed = 0; stopTimer(); const durationMin = (totalElapsed / 60).toFixed(1); const avgSecVal = targetQuestions > 0 ? (totalElapsed / targetQuestions).toFixed(1) : '—'; const startDate = startTimestamp ? startTimestamp : new Date(); const record = { date: startDate.toLocaleDateString() + ' ' + (startTimestamp?startTimestamp.toLocaleTimeString():'--'), durationMin: durationMin, questions: targetQuestions, avgSec: avgSecVal !== '—' ? avgSecVal+'秒' : '—', fullSeconds: totalElapsed }; addHistoryRecord(currentUser, record); const encourages = ["🌟 每一分钟都算数，上岸就在前方！","💪 坚持刷题，你比想象中更优秀！","📖 公考之路，小谈小陈同行！"]; const randomEncourage = encourages[Math.floor(Math.random() * encourages.length)]; const statHtml = `<h3>📊 统计结算 · ${currentUser}</h3><div class="stat-grid"><div class="stat-row"><span>📅 日期</span><span>${startDate.toLocaleDateString()}</span></div><div class="stat-row"><span>⏱️ 总用时</span><span>${durationMin} 分钟</span></div><div class="stat-row"><span>📚 做题量</span><span>${targetQuestions} 题</span></div><div class="stat-row"><span>⚡ 平均每题</span><span>${avgSecVal !== '—' ? avgSecVal + ' 秒' : '—'}</span></div></div><div class="encourage">✨ ${randomEncourage}</div><div class="modal-buttons"><button id="closeStatBtn" class="primary">关闭</button></div>`; document.getElementById('statContent').innerHTML = statHtml; document.getElementById('statModal').style.display = 'flex'; document.getElementById('closeStatBtn').onclick = () => document.getElementById('statModal').style.display = 'none'; currentMode = 'finished'; updateDisplay(totalElapsed, false); updateMetaUI(); }
+    let confirmResolver = null; const confirmModal = document.getElementById('confirmModal'), confirmTitle = document.getElementById('confirmTitle'), confirmMessage = document.getElementById('confirmMessage'), confirmOkBtn = document.getElementById('confirmOkBtn'), confirmCancelBtn = document.getElementById('confirmCancelBtn');
+    function showConfirm(title, message) { return new Promise((resolve) => { confirmTitle.innerText = title; confirmMessage.innerText = message; confirmModal.style.display = 'flex'; confirmResolver = resolve; }); }
+    function closeConfirmModal(res) { confirmModal.style.display = 'none'; if (confirmResolver) confirmResolver(res); confirmResolver = null; }
+    confirmOkBtn.onclick = () => closeConfirmModal(true); confirmCancelBtn.onclick = () => closeConfirmModal(false);
+    window.addEventListener('click', (e) => { if (e.target === confirmModal) closeConfirmModal(false); });
+    function initUserMemory() { const stored = localStorage.getItem('timerSelectedUser'); if (stored === '谈伟' || stored === '陈曦') currentUser = stored; document.querySelectorAll('.user-btn').forEach(btn => { btn.classList.toggle('active', btn.getAttribute('data-user') === currentUser); btn.onclick = () => switchUser(btn.getAttribute('data-user')); }); applyUserSettings(currentUser); }
+    function initTheme() { const isDark = localStorage.getItem('timerTheme') === 'dark'; document.body.classList.add(isDark ? 'dark' : 'light'); document.body.classList.remove(isDark ? 'light' : 'dark'); const toggle = document.getElementById('themeToggle'); const update = () => { const dark = document.body.classList.contains('dark'); toggle.innerHTML = dark ? '<i class="fas fa-sun"></i> <span>浅色模式</span>' : '<i class="fas fa-moon"></i> <span>深色模式</span>'; localStorage.setItem('timerTheme', dark ? 'dark' : 'light'); }; update(); toggle.onclick = () => { document.body.classList.toggle('dark'); document.body.classList.toggle('light'); update(); }; }
+    document.getElementById('inputTimeBtn').onclick = async () => { if (currentMode !== 'idle') { if(await showConfirm('运行中', '计时运行中，重置后再设定？')) await fullReset(); else return; } document.getElementById('minutesInput').value = Math.floor(initialTotalSeconds / 60) || 30; document.getElementById('questionsInput').value = targetQuestions || 30; document.getElementById('inputModal').style.display = 'flex'; };
+    document.getElementById('confirmInputBtn').onclick = () => { let mins = parseInt(document.getElementById('minutesInput').value,10) || 1; let qs = parseInt(document.getElementById('questionsInput').value,10) || 1; mins = Math.min(1440, Math.max(1, mins)); qs = Math.min(150, Math.max(1, qs)); initialTotalSeconds = mins * 60; remainingSeconds = initialTotalSeconds; targetQuestions = qs; currentMode = 'idle'; stopTimer(); updateDisplay(remainingSeconds, false); updateMetaUI(); saveUserSettings(currentUser, mins, qs); document.getElementById('inputModal').style.display = 'none'; };
+    document.getElementById('cancelInputBtn').onclick = () => document.getElementById('inputModal').style.display = 'none';
+    stopBtn.onclick = finishAndSave; resetBtn.onclick = fullReset; startPauseBtn.onclick = handleStartPause;
+    document.getElementById('historyBtn').onclick = () => { renderHistoryModal(currentUser); document.getElementById('historyModal').style.display = 'flex'; };
+    document.getElementById('closeHistoryBtn').onclick = () => document.getElementById('historyModal').style.display = 'none';
+    document.getElementById('clearHistoryBtn').onclick = async () => { if(await showConfirm('清空历史', `确定清空${currentUser}的所有学习记录吗？`)) clearAllHistory(currentUser); };
+    document.getElementById('voiceBtn').onclick = () => openVoiceModal();
+    document.getElementById('closeVoiceBtn').onclick = () => document.getElementById('voiceModal').style.display = 'none';
+    document.querySelectorAll('.preset-btn').forEach(btn => { btn.onclick = () => setPreset(parseInt(btn.dataset.min), parseInt(btn.dataset.q)); });
+    window.addEventListener('keydown', (e) => { if (e.target.tagName === 'INPUT') return; if (e.code === 'Space') { e.preventDefault(); handleStartPause(); } else if (e.code === 'KeyR') { e.preventDefault(); fullReset(); } });
+    window.addEventListener('click', function initOnce() { initAudio(); window.removeEventListener('click', initOnce); });
+    initTheme(); initUserMemory(); initVoiceManager();
+    document.querySelectorAll('.modal').forEach(modal => { modal.addEventListener('click', (e) => { if(e.target === modal) modal.style.display = 'none'; }); });
+</script>
+</body>
+</html>
