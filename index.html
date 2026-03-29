@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>风雨 丨 计时器 </title>
+    <title>小谈和小陈 · 做题计时器 | 专注上岸</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -31,6 +31,7 @@
         body.light .timer-card {
             background: rgba(255, 255, 255, 0.96);
             box-shadow: 0 25px 45px -18px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(0, 0, 0, 0.03);
         }
         body.light .flip-unit {
             background: #ffffff;
@@ -80,7 +81,6 @@
             border-color: #cbd5e1;
             color: #1e3a8a;
         }
-        /* 浅色模态框输入框 */
         body.light .input-group input {
             background: #ffffff;
             border: 1px solid #cbd5e1;
@@ -163,7 +163,7 @@
             box-shadow: 0 0 0 3px rgba(59,130,246,0.3);
         }
 
-        /* 布局 */
+        /* 布局 + 动画 */
         .container {
             width: 100%;
             max-width: 1300px;
@@ -212,6 +212,8 @@
             cursor: pointer;
             transition: all 0.2s;
             font-family: inherit;
+            background: rgba(128, 128, 128, 0.15);
+            color: inherit;
         }
         .user-btn.active {
             background: #3b82f6;
@@ -238,9 +240,41 @@
             padding: 32px 32px 40px;
             margin-bottom: 32px;
             transition: box-shadow 0.2s, border 0.2s;
+            position: relative;
         }
         .timer-card.running {
             box-shadow: 0 0 0 2px rgba(59,130,246,0.2), 0 25px 45px -12px rgba(59,130,246,0.3);
+        }
+        /* 开始计时闪烁特效 */
+        .timer-card.blink-green {
+            animation: borderFlash 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1) 2;
+        }
+        @keyframes borderFlash {
+            0% {
+                box-shadow: 0 0 0 0 rgba(74, 222, 128, 0), 0 25px 45px -18px rgba(0, 0, 0, 0.2);
+                border-color: rgba(74, 222, 128, 0.2);
+            }
+            40% {
+                box-shadow: 0 0 0 5px #4ade80, 0 0 0 10px rgba(74, 222, 128, 0.3), 0 20px 35px -12px #4ade8066;
+                border-color: #4ade80;
+            }
+            70% {
+                box-shadow: 0 0 0 2px #86efac, 0 0 0 5px rgba(74, 222, 128, 0.2);
+                border-color: #86efac;
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(74, 222, 128, 0), 0 25px 45px -18px rgba(0, 0, 0, 0.2);
+                border-color: transparent;
+            }
+        }
+        body.dark .timer-card.blink-green {
+            animation: borderFlashDark 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1) 2;
+        }
+        @keyframes borderFlashDark {
+            0% { box-shadow: 0 0 0 0 #4ade8040; border-color: #4ade8020; }
+            40% { box-shadow: 0 0 0 5px #4ade80, 0 0 0 12px #4ade8050; border-color: #4ade80; }
+            70% { box-shadow: 0 0 0 2px #86efac, 0 0 0 6px #86efac60; border-color: #86efac; }
+            100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); border-color: transparent; }
         }
 
         .mission-bar {
@@ -436,7 +470,7 @@
             border-radius: 40px;
         }
 
-        /* ========= 统一模态框样式 ========= */
+        /* 统一模态框样式 */
         .modal {
             display: none;
             position: fixed;
@@ -467,7 +501,6 @@
         @keyframes modalPop {
             to { transform: scale(1); }
         }
-        /* 音色弹窗宽一些 */
         .voice-modal .modal-content {
             max-width: 760px;
         }
@@ -490,11 +523,6 @@
             justify-content: center;
             gap: 10px;
         }
-        .modal-content p {
-            font-size: 1rem;
-            line-height: 1.5;
-            margin-bottom: 28px;
-        }
         .input-group {
             text-align: left;
             margin-bottom: 24px;
@@ -504,7 +532,6 @@
             margin-bottom: 8px;
             font-weight: 600;
             font-size: 0.95rem;
-            letter-spacing: 0.3px;
         }
         .input-group input {
             width: 100%;
@@ -529,7 +556,6 @@
             font-weight: 600;
             transition: 0.2s;
             font-size: 0.95rem;
-            font-family: inherit;
         }
         .modal-buttons button.primary {
             background: #3b82f6;
@@ -545,7 +571,6 @@
             background: #dc2626;
             color: white;
         }
-        /* 统计弹窗专用 */
         .stat-modal .modal-content {
             max-width: 600px;
             text-align: left;
@@ -568,7 +593,6 @@
             background: rgba(59, 130, 246, 0.12);
             font-weight: 500;
         }
-        /* 历史弹窗表格 */
         .history-table {
             width: 100%;
             border-collapse: collapse;
@@ -605,12 +629,6 @@
             margin: 12px 0 8px;
             border-radius: 28px;
         }
-        /* 确认弹窗特殊 */
-        #confirmModal .modal-content {
-            max-width: 440px;
-        }
-
-        /* 音色列表样式 */
         .voice-list {
             max-height: 460px;
             overflow-y: auto;
@@ -684,8 +702,6 @@
             text-align: center;
             padding: 30px;
         }
-
-        /* toast */
         .toast-message {
             position: fixed;
             bottom: 30px;
@@ -700,7 +716,6 @@
             z-index: 2100;
             pointer-events: none;
             animation: toastFade 2.5s ease forwards;
-            white-space: nowrap;
         }
         @keyframes toastFade {
             0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
@@ -747,7 +762,7 @@
             <div class="time-group"><div class="flip-unit" data-digit="secTens"></div><div class="flip-unit" data-digit="secOnes"></div></div>
         </div>
         <div class="progress-section"><div class="progress-bar-bg"><div class="progress-fill" id="progressFill" style="width: 0%;"></div></div></div>
-        <div class="status-badge"><i class="fas fa-info-circle"></i> <span id="statusText">✨ 设定分钟与题量</span></div>
+        <div class="status-badge"><i class="fas fa-info-circle"></i> <span id="statusText">✨ 设定目标，点击开始</span></div>
     </div>
 
     <div class="preset-group" id="presetGroup">
@@ -779,80 +794,199 @@
 <div id="historyModal" class="modal"><div class="modal-content" style="max-width: 720px;"><h3><i class="fas fa-database"></i> 学习历史 · <span id="historyUserName">谈伟</span></h3><div id="historyListContainer" style="max-height: 420px; overflow-y: auto;"></div><div class="modal-buttons"><button id="clearHistoryBtn" class="danger" style="background:#b91c1c;color:white;">清空全部历史</button><button id="closeHistoryBtn" class="secondary">关闭</button></div></div></div>
 <!-- 确认弹窗 -->
 <div id="confirmModal" class="modal"><div class="modal-content"><h3 id="confirmTitle">确认操作</h3><p id="confirmMessage"></p><div class="modal-buttons"><button id="confirmOkBtn" class="primary">确定</button><button id="confirmCancelBtn" class="secondary">取消</button></div></div></div>
-
 <!-- 音色选择弹窗 -->
 <div id="voiceModal" class="modal voice-modal"><div class="modal-content"><h3><i class="fas fa-head-side-vr"></i> 选择语音音色</h3><p style="margin-bottom: 8px; font-size: 0.85rem;">✨ 挑选喜欢的播报声音，点击试听，选中后即时生效</p><div id="voiceListContainer" class="voice-list"><div class="voice-loading"><i class="fas fa-spinner fa-pulse"></i> 加载语音列表中...</div></div><div class="modal-buttons"><button id="closeVoiceBtn" class="secondary">关闭</button></div></div></div>
 
 <script>
-    // ----- 翻页时钟 (保持不变) -----
+    // ---------- 翻页时钟组件 ----------
     class FlipDigitController {
-        constructor(el) { this.element = el; this.currentValue = 0; this._create(); }
-        _create() { this.element.innerHTML = `<div class="flip-card"><div class="digit-front">0</div><div class="digit-back">0</div></div>`; this.front = this.element.querySelector('.digit-front'); this.back = this.element.querySelector('.digit-back'); }
-        setValue(newValue, animate = true) { if (this.currentValue === newValue) return; const old = this.currentValue; this.currentValue = newValue; if (!animate) { this.front.innerText = newValue; this.back.innerText = newValue; return; } this.back.innerText = newValue; this.front.innerText = old; this.element.classList.add('flipping'); const onEnd = () => { this.element.classList.remove('flipping'); this.front.innerText = newValue; this.element.removeEventListener('animationend', onEnd); }; this.element.addEventListener('animationend', onEnd); }
+        constructor(el) {
+            this.element = el;
+            this.currentValue = 0;
+            this._create();
+        }
+        _create() {
+            this.element.innerHTML = `<div class="flip-card"><div class="digit-front">0</div><div class="digit-back">0</div></div>`;
+            this.front = this.element.querySelector('.digit-front');
+            this.back = this.element.querySelector('.digit-back');
+        }
+        setValue(newValue, animate = true) {
+            if (this.currentValue === newValue) return;
+            const old = this.currentValue;
+            this.currentValue = newValue;
+            if (!animate) {
+                this.front.innerText = newValue;
+                this.back.innerText = newValue;
+                return;
+            }
+            this.back.innerText = newValue;
+            this.front.innerText = old;
+            this.element.classList.add('flipping');
+            const onEnd = () => {
+                this.element.classList.remove('flipping');
+                this.front.innerText = newValue;
+                this.element.removeEventListener('animationend', onEnd);
+            };
+            this.element.addEventListener('animationend', onEnd);
+        }
     }
-    const units = {}; document.querySelectorAll('.flip-unit').forEach(el => { units[el.getAttribute('data-digit')] = new FlipDigitController(el); });
-    function updateDisplay(totalSeconds, animate = true) { if (totalSeconds < 0) totalSeconds = 0; let hrs = Math.floor(totalSeconds / 3600), mins = Math.floor((totalSeconds % 3600) / 60), secs = totalSeconds % 60; if (hrs > 99) hrs = 99; const h = hrs.toString().padStart(2,'0'), m = mins.toString().padStart(2,'0'), s = secs.toString().padStart(2,'0'); units.hourTens.setValue(parseInt(h[0]), animate); units.hourOnes.setValue(parseInt(h[1]), animate); units.minTens.setValue(parseInt(m[0]), animate); units.minOnes.setValue(parseInt(m[1]), animate); units.secTens.setValue(parseInt(s[0]), animate); units.secOnes.setValue(parseInt(s[1]), animate); }
 
-    // ----- 全局变量 (计时器核心)-----
-    let timerInterval = null, currentMode = 'idle', previousMode = null;
-    let remainingSeconds = 0, initialTotalSeconds = 0, countupBaseSeconds = 0, countupElapsed = 0;
-    let targetQuestions = 0, startTimestamp = null, hasTenPercentNotified = false;
-    let currentUser = "谈伟", pausedRemaining = 0, pausedCountupBase = 0, pausedCountupElapsed = 0;
-    const startPauseBtn = document.getElementById('startPauseBtn'), stopBtn = document.getElementById('stopBtn'), resetBtn = document.getElementById('resetBtn');
-    const statusTextSpan = document.getElementById('statusText'), missionTargetSpan = document.getElementById('targetDisplay');
-    const progressFill = document.getElementById('progressFill'), liveIndicator = document.getElementById('liveIndicator'), timerCard = document.getElementById('timerCard');
-    // 音频beep
-    let audioCtx = null, audioAllowed = false;
-    function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if (audioCtx.state === 'suspended') return audioCtx.resume().then(()=>{audioAllowed=true;}); audioAllowed=true; return Promise.resolve(); }
-    function playBeep() { if(!audioCtx || !audioAllowed) return; const osc = audioCtx.createOscillator(), gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine'; osc.frequency.value = 880; gain.gain.setValueAtTime(0.2, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime+0.4); osc.start(); osc.stop(audioCtx.currentTime+0.3);}
-    async function playTripleBeep() { for(let i=0;i<3;i++) { playBeep(); await new Promise(r=>setTimeout(r,350));} }
+    // 初始化翻页单元
+    const units = {};
+    document.querySelectorAll('.flip-unit').forEach(el => {
+        units[el.getAttribute('data-digit')] = new FlipDigitController(el);
+    });
 
-    // ========= 语音增强模块 (支持音色选择) =========
-    let selectedVoice = null;          // 存储当前选中的voice对象
+    function updateDisplay(totalSeconds, animate = true) {
+        if (totalSeconds < 0) totalSeconds = 0;
+        let hrs = Math.floor(totalSeconds / 3600);
+        let mins = Math.floor((totalSeconds % 3600) / 60);
+        let secs = totalSeconds % 60;
+        if (hrs > 99) hrs = 99;
+        const h = hrs.toString().padStart(2, '0');
+        const m = mins.toString().padStart(2, '0');
+        const s = secs.toString().padStart(2, '0');
+        units.hourTens.setValue(parseInt(h[0]), animate);
+        units.hourOnes.setValue(parseInt(h[1]), animate);
+        units.minTens.setValue(parseInt(m[0]), animate);
+        units.minOnes.setValue(parseInt(m[1]), animate);
+        units.secTens.setValue(parseInt(s[0]), animate);
+        units.secOnes.setValue(parseInt(s[1]), animate);
+    }
+
+    // ---------- 全局状态 ----------
+    let timerInterval = null;
+    let currentMode = 'idle';       // 'idle', 'countdown', 'countup', 'paused', 'finished'
+    let previousMode = null;
+    let remainingSeconds = 0;
+    let initialTotalSeconds = 0;
+    let countupBaseSeconds = 0;
+    let countupElapsed = 0;
+    let targetQuestions = 0;
+    let startTimestamp = null;
+    let hasTenPercentNotified = false;
+    let currentUser = "谈伟";
+    let pausedRemaining = 0;
+    let pausedCountupBase = 0;
+    let pausedCountupElapsed = 0;
+
+    // DOM 元素
+    const startPauseBtn = document.getElementById('startPauseBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const statusTextSpan = document.getElementById('statusText');
+    const missionTargetSpan = document.getElementById('targetDisplay');
+    const progressFill = document.getElementById('progressFill');
+    const liveIndicator = document.getElementById('liveIndicator');
+    const timerCard = document.getElementById('timerCard');
+
+    // ---------- 音频 ----------
+    let audioCtx = null;
+    let audioAllowed = false;
+    async function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            await audioCtx.resume();
+        }
+        audioAllowed = true;
+    }
+    function playBeep(frequency = 880, duration = 0.3, volume = 0.2) {
+        if (!audioCtx || !audioAllowed) return;
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.type = 'sine';
+        osc.frequency.value = frequency;
+        gain.gain.setValueAtTime(volume, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+        osc.start(now);
+        osc.stop(now + duration);
+    }
+    async function playStartDing() {
+        if (!audioCtx) await initAudio();
+        if (!audioCtx || audioCtx.state !== 'running') return;
+        const now = audioCtx.currentTime;
+        const gain = audioCtx.createGain();
+        gain.connect(audioCtx.destination);
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.linearRampToValueAtTime(0.28, now + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.45);
+        const osc1 = audioCtx.createOscillator();
+        osc1.connect(gain);
+        osc1.type = 'sine';
+        osc1.frequency.value = 1230;
+        osc1.start(now);
+        osc1.stop(now + 0.18);
+        const osc2 = audioCtx.createOscillator();
+        osc2.connect(gain);
+        osc2.type = 'sine';
+        osc2.frequency.value = 1560;
+        osc2.start(now + 0.12);
+        osc2.stop(now + 0.3);
+    }
+    async function playTripleBeep() {
+        for (let i = 0; i < 3; i++) {
+            playBeep(880, 0.25, 0.2);
+            await new Promise(r => setTimeout(r, 280));
+        }
+    }
+    function performStartFeedback() {
+        timerCard.classList.remove('blink-green');
+        void timerCard.offsetWidth;
+        timerCard.classList.add('blink-green');
+        setTimeout(() => timerCard.classList.remove('blink-green'), 650);
+        initAudio().then(() => playStartDing()).catch(e => console.warn);
+    }
+
+    // ---------- 语音播报 + 音色管理 ----------
+    let selectedVoice = null;
     let availableVoices = [];
     const VOICE_STORAGE_KEY = 'timerSelectedVoiceURI';
     function loadStoredVoice() {
         const storedURI = localStorage.getItem(VOICE_STORAGE_KEY);
-        if(storedURI && availableVoices.length) {
+        if (storedURI && availableVoices.length) {
             const found = availableVoices.find(v => v.voiceURI === storedURI);
-            if(found) { selectedVoice = found; return true; }
+            if (found) {
+                selectedVoice = found;
+                return true;
+            }
         }
-        // 默认找一个中文女声或任意中文语音
-        const defaultChinese = availableVoices.find(v => v.lang.includes('zh') && (v.name.includes('Tingting') || v.name.includes('Xiaoxiao') || v.name.includes('Meijia') || v.name.includes('晓')) );
-        if(defaultChinese) selectedVoice = defaultChinese;
-        else if(availableVoices.length) selectedVoice = availableVoices.find(v => v.lang.includes('zh')) || availableVoices[0];
-        if(selectedVoice) localStorage.setItem(VOICE_STORAGE_KEY, selectedVoice.voiceURI);
+        const defaultChinese = availableVoices.find(v => v.lang.includes('zh') && (v.name.includes('Tingting') || v.name.includes('Xiaoxiao') || v.name.includes('Meijia') || v.name.includes('晓')));
+        if (defaultChinese) selectedVoice = defaultChinese;
+        else if (availableVoices.length) selectedVoice = availableVoices.find(v => v.lang.includes('zh')) || availableVoices[0];
+        if (selectedVoice) localStorage.setItem(VOICE_STORAGE_KEY, selectedVoice.voiceURI);
         return !!selectedVoice;
     }
     function saveSelectedVoice(voice) {
         selectedVoice = voice;
-        if(voice) localStorage.setItem(VOICE_STORAGE_KEY, voice.voiceURI);
+        if (voice) localStorage.setItem(VOICE_STORAGE_KEY, voice.voiceURI);
         else localStorage.removeItem(VOICE_STORAGE_KEY);
     }
-    // 优化的 speakText：使用选定音色
     function speakText(text) {
-        if(!window.speechSynthesis) return;
-        window.speechSynthesis.cancel(); // 避免重叠
+        if (!window.speechSynthesis) return;
+        window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'zh-CN';
         utterance.rate = 0.9;
-        if(selectedVoice) utterance.voice = selectedVoice;
+        if (selectedVoice) utterance.voice = selectedVoice;
         window.speechSynthesis.speak(utterance);
     }
-    // 试听指定语音
     function previewVoice(voice) {
-        if(!voice || !window.speechSynthesis) return;
+        if (!voice || !window.speechSynthesis) return;
         window.speechSynthesis.cancel();
-        const testMsg = new SpeechSynthesisUtterance("你好，小谈和小陈，现在你听到的是试听语音，希望你喜欢这个音色。");
+        const testMsg = new SpeechSynthesisUtterance("你好，这是试听语音，希望你喜欢这个音色。");
         testMsg.voice = voice;
         testMsg.lang = voice.lang;
         testMsg.rate = 0.9;
         window.speechSynthesis.speak(testMsg);
     }
-    // 渲染音色列表
     function renderVoiceList() {
         const container = document.getElementById('voiceListContainer');
-        if(!availableVoices.length) {
+        if (!availableVoices.length) {
             container.innerHTML = '<div class="voice-loading"><i class="fas fa-exclamation-triangle"></i> 暂未获取到语音，请刷新或检查浏览器支持</div>';
             return;
         }
@@ -874,13 +1008,12 @@
             `;
         });
         container.innerHTML = html;
-        // 绑定事件
         container.querySelectorAll('.preview-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const uri = btn.getAttribute('data-voice-uri');
                 const voice = availableVoices.find(v => v.voiceURI === uri);
-                if(voice) previewVoice(voice);
+                if (voice) previewVoice(voice);
             });
         });
         container.querySelectorAll('.select-btn').forEach(btn => {
@@ -888,11 +1021,10 @@
                 e.stopPropagation();
                 const uri = btn.getAttribute('data-voice-uri');
                 const voice = availableVoices.find(v => v.voiceURI === uri);
-                if(voice) {
+                if (voice) {
                     saveSelectedVoice(voice);
-                    renderVoiceList(); // 刷新高亮
+                    renderVoiceList();
                     showToast(`已选用音色：${voice.name}`);
-                    // 可播放一句生效提示
                     const confirmMsg = new SpeechSynthesisUtterance(`音色已切换为${voice.name}`);
                     confirmMsg.voice = voice;
                     confirmMsg.lang = voice.lang;
@@ -903,66 +1035,427 @@
         });
     }
     function initVoiceManager() {
-        if(!window.speechSynthesis) { console.warn("浏览器不支持语音合成"); return; }
+        if (!window.speechSynthesis) return;
         const updateVoices = () => {
             availableVoices = window.speechSynthesis.getVoices().filter(v => v.lang.includes('zh') || v.lang.includes('CN') || v.lang.includes('cmn'));
-            if(availableVoices.length === 0) availableVoices = window.speechSynthesis.getVoices(); // fallback all
+            if (availableVoices.length === 0) availableVoices = window.speechSynthesis.getVoices();
             loadStoredVoice();
             renderVoiceList();
         };
         window.speechSynthesis.onvoiceschanged = updateVoices;
-        setTimeout(updateVoices, 200); // 立即尝试一次
+        setTimeout(updateVoices, 200);
     }
-    // 打开音色弹窗刷新列表
     function openVoiceModal() {
         const modal = document.getElementById('voiceModal');
-        if(availableVoices.length) renderVoiceList();
-        else initVoiceManager(); // 强制刷新
+        if (availableVoices.length) renderVoiceList();
+        else initVoiceManager();
         modal.style.display = 'flex';
     }
-    // ----- 原有计时函数保持不变，但保留speakText替换为增强版------
-    function stopTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } }
-    function tick() { if (currentMode === 'countdown') { if (remainingSeconds <= 0) { clearInterval(timerInterval); currentMode = 'countup'; countupBaseSeconds = initialTotalSeconds; countupElapsed = 0; hasTenPercentNotified = false; updateDisplay(countupBaseSeconds + countupElapsed, true); playTripleBeep(); speakText("倒计时结束，开始统计做题总时长"); timerInterval = setInterval(tick, 1000); updateMetaUI(); return; } remainingSeconds--; updateDisplay(remainingSeconds, true); if (!hasTenPercentNotified && initialTotalSeconds > 0 && remainingSeconds / initialTotalSeconds <= 0.1 && remainingSeconds > 0) { hasTenPercentNotified = true; playTripleBeep(); const mins = Math.floor(remainingSeconds / 60), secs = remainingSeconds % 60; speakText(`剩余${mins}分钟${secs}秒`); } updateMetaUI(); } else if (currentMode === 'countup') { countupElapsed++; updateDisplay(countupBaseSeconds + countupElapsed, true); updateMetaUI(); } }
-    function startTimer() { if (timerInterval) clearInterval(timerInterval); timerInterval = setInterval(tick, 1000); }
-    function updateMetaUI() { /* 与原逻辑相同，略保留核心 */ const minsSet = Math.floor(initialTotalSeconds / 60); missionTargetSpan.innerText = `${minsSet}分钟 · ${targetQuestions}题`; if (currentMode === 'countdown') { let percent = ((initialTotalSeconds - remainingSeconds) / initialTotalSeconds) * 100; percent = Math.min(100, Math.max(0, percent)); progressFill.style.width = `${percent}%`; statusTextSpan.innerText = `⏳ 倒计时中 · 已完成 ${Math.floor(percent)}%`; } else if (currentMode === 'countup') { progressFill.style.width = `100%`; statusTextSpan.innerText = `📈 超时统计中 · 专注延长时间`; } else if (currentMode === 'paused') { if (previousMode === 'countdown') { let percent = ((initialTotalSeconds - remainingSeconds) / initialTotalSeconds) * 100; percent = Math.min(100, Math.max(0, percent)); progressFill.style.width = `${percent}%`; statusTextSpan.innerText = `⏸ 暂停 · 已完成 ${Math.floor(percent)}%`; } else { progressFill.style.width = `100%`; statusTextSpan.innerText = `⏸ 暂停`; } } else if (currentMode === 'finished') statusTextSpan.innerText = `✅ 已完成 · 重置开始新任务`; else { progressFill.style.width = `0%`; statusTextSpan.innerText = `✨ 设定目标，点击开始`; } const isActive = (currentMode === 'countdown' || currentMode === 'countup'); liveIndicator.style.display = isActive ? 'flex' : 'none'; timerCard.classList.toggle('running', isActive); startPauseBtn.innerHTML = (currentMode === 'countdown' || currentMode === 'countup') ? '<i class="fas fa-pause"></i> 暂停' : (currentMode === 'paused' ? '<i class="fas fa-play"></i> 继续' : '<i class="fas fa-play"></i> 开始'); }
-    async function handleStartPause() { await initAudio(); if (currentMode === 'idle' || currentMode === 'finished') { if (remainingSeconds <= 0 && initialTotalSeconds === 0) { showToast('请先输入时间/题量'); return; } if (remainingSeconds <= 0 && initialTotalSeconds > 0) { remainingSeconds = initialTotalSeconds; updateDisplay(remainingSeconds, false); } hasTenPercentNotified = false; currentMode = 'countdown'; startTimestamp = new Date(); startTimer(); updateMetaUI(); } else if (currentMode === 'countdown' || currentMode === 'countup') { stopTimer(); previousMode = currentMode; if (currentMode === 'countdown') pausedRemaining = remainingSeconds; else { pausedCountupBase = countupBaseSeconds; pausedCountupElapsed = countupElapsed; } currentMode = 'paused'; updateMetaUI(); } else if (currentMode === 'paused') { if (previousMode === 'countdown') { remainingSeconds = pausedRemaining; currentMode = 'countdown'; startTimer(); } else if (previousMode === 'countup') { countupBaseSeconds = pausedCountupBase; countupElapsed = pausedCountupElapsed; currentMode = 'countup'; startTimer(); } updateMetaUI(); } }
-    async function fullReset() { if (currentMode !== 'idle') { const ok = await showConfirm('重置计时器', '重置会丢失当前进度，确定吗？'); if (!ok) return; } stopTimer(); currentMode = 'idle'; remainingSeconds = initialTotalSeconds; countupBaseSeconds = 0; countupElapsed = 0; hasTenPercentNotified = false; startTimestamp = null; updateDisplay(initialTotalSeconds > 0 ? initialTotalSeconds : 0, false); updateMetaUI(); }
-    async function setPreset(minutes, questions) { if (currentMode !== 'idle') { const ok = await showConfirm('运行中', '计时运行中，重置后再设定？'); if (ok) await fullReset(); else return; } initialTotalSeconds = minutes * 60; remainingSeconds = initialTotalSeconds; targetQuestions = questions; currentMode = 'idle'; stopTimer(); updateDisplay(remainingSeconds, false); updateMetaUI(); saveUserSettings(currentUser, minutes, questions); showToast(`⚡ 已预设 ${minutes}分钟 / ${questions}题`); }
-    async function switchUser(newUser) { if (currentUser === newUser) return; if (currentMode !== 'idle') { const confirm = await showConfirm('切换用户', `当前计时进行中，切换将重置进度并加载${newUser}的预设，确定吗？`); if (!confirm) return; await fullReset(); } currentUser = newUser; localStorage.setItem('timerSelectedUser', currentUser); document.querySelectorAll('.user-btn').forEach(btn => btn.classList.toggle('active', btn.getAttribute('data-user') === currentUser)); applyUserSettings(currentUser); showToast(`👤 已切换至 ${currentUser}`); }
-    function applyUserSettings(user) { const settings = loadUserSettings(user); let mins = 30, qs = 30; if(settings) { mins = settings.mins; qs = settings.qs; } initialTotalSeconds = mins * 60; remainingSeconds = initialTotalSeconds; targetQuestions = qs; currentMode = 'idle'; stopTimer(); updateDisplay(remainingSeconds, false); updateMetaUI(); saveUserSettings(user, mins, qs); }
-    function saveUserSettings(user, minutes, questions) { localStorage.setItem(`userSettings_${user}`, JSON.stringify({ targetMinutes: minutes, targetQuestions: questions })); }
-    function loadUserSettings(user) { const raw = localStorage.getItem(`userSettings_${user}`); if(raw) { const { targetMinutes, targetQuestions } = JSON.parse(raw); return { mins: targetMinutes, qs: targetQuestions }; } return null; }
-    function showToast(msg) { const toast = document.createElement('div'); toast.className = 'toast-message'; toast.innerText = msg; document.body.appendChild(toast); setTimeout(() => toast.remove(), 2500); }
-    // 历史相关快速实现（复用原有）
+
+    // ---------- 计时核心函数 ----------
+    function stopTimer() {
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+    }
+    function tick() {
+        if (currentMode === 'countdown') {
+            if (remainingSeconds <= 0) {
+                clearInterval(timerInterval);
+                currentMode = 'countup';
+                countupBaseSeconds = initialTotalSeconds;
+                countupElapsed = 0;
+                hasTenPercentNotified = false;
+                updateDisplay(countupBaseSeconds + countupElapsed, true);
+                playTripleBeep();
+                speakText("倒计时结束，开始统计做题总时长");
+                timerInterval = setInterval(tick, 1000);
+                updateMetaUI();
+                return;
+            }
+            remainingSeconds--;
+            updateDisplay(remainingSeconds, true);
+            if (!hasTenPercentNotified && initialTotalSeconds > 0 && remainingSeconds / initialTotalSeconds <= 0.1 && remainingSeconds > 0) {
+                hasTenPercentNotified = true;
+                playTripleBeep();
+                const mins = Math.floor(remainingSeconds / 60);
+                const secs = remainingSeconds % 60;
+                speakText(`剩余${mins}分钟${secs}秒`);
+            }
+            updateMetaUI();
+        } else if (currentMode === 'countup') {
+            countupElapsed++;
+            updateDisplay(countupBaseSeconds + countupElapsed, true);
+            updateMetaUI();
+        }
+    }
+    function startTimer() {
+        if (timerInterval) clearInterval(timerInterval);
+        timerInterval = setInterval(tick, 1000);
+    }
+    function updateMetaUI() {
+        const minsSet = Math.floor(initialTotalSeconds / 60);
+        missionTargetSpan.innerText = `${minsSet}分钟 · ${targetQuestions}题`;
+        if (currentMode === 'countdown') {
+            let percent = ((initialTotalSeconds - remainingSeconds) / initialTotalSeconds) * 100;
+            percent = Math.min(100, Math.max(0, percent));
+            progressFill.style.width = `${percent}%`;
+            statusTextSpan.innerText = `⏳ 倒计时中 · 已完成 ${Math.floor(percent)}%`;
+        } else if (currentMode === 'countup') {
+            progressFill.style.width = `100%`;
+            statusTextSpan.innerText = `📈 超时统计中 · 专注延长时间`;
+        } else if (currentMode === 'paused') {
+            if (previousMode === 'countdown') {
+                let percent = ((initialTotalSeconds - remainingSeconds) / initialTotalSeconds) * 100;
+                percent = Math.min(100, Math.max(0, percent));
+                progressFill.style.width = `${percent}%`;
+                statusTextSpan.innerText = `⏸ 暂停 · 已完成 ${Math.floor(percent)}%`;
+            } else {
+                progressFill.style.width = `100%`;
+                statusTextSpan.innerText = `⏸ 暂停`;
+            }
+        } else if (currentMode === 'finished') {
+            statusTextSpan.innerText = `✅ 已完成 · 重置开始新任务`;
+        } else {
+            progressFill.style.width = `0%`;
+            statusTextSpan.innerText = `✨ 设定目标，点击开始`;
+        }
+        const isActive = (currentMode === 'countdown' || currentMode === 'countup');
+        liveIndicator.style.display = isActive ? 'flex' : 'none';
+        timerCard.classList.toggle('running', isActive);
+        startPauseBtn.innerHTML = (currentMode === 'countdown' || currentMode === 'countup') ? '<i class="fas fa-pause"></i> 暂停' : (currentMode === 'paused' ? '<i class="fas fa-play"></i> 继续' : '<i class="fas fa-play"></i> 开始');
+    }
+    async function handleStartPause() {
+        await initAudio();
+        if (currentMode === 'idle' || currentMode === 'finished') {
+            if (remainingSeconds <= 0 && initialTotalSeconds === 0) {
+                showToast('请先输入时间/题量');
+                return;
+            }
+            if (remainingSeconds <= 0 && initialTotalSeconds > 0) {
+                remainingSeconds = initialTotalSeconds;
+                updateDisplay(remainingSeconds, false);
+            }
+            hasTenPercentNotified = false;
+            currentMode = 'countdown';
+            startTimestamp = new Date();
+            startTimer();
+            updateMetaUI();
+            performStartFeedback();  // ✨ 开始计时反馈
+        } else if (currentMode === 'countdown' || currentMode === 'countup') {
+            stopTimer();
+            previousMode = currentMode;
+            if (currentMode === 'countdown') pausedRemaining = remainingSeconds;
+            else {
+                pausedCountupBase = countupBaseSeconds;
+                pausedCountupElapsed = countupElapsed;
+            }
+            currentMode = 'paused';
+            updateMetaUI();
+        } else if (currentMode === 'paused') {
+            if (previousMode === 'countdown') {
+                remainingSeconds = pausedRemaining;
+                currentMode = 'countdown';
+                startTimer();
+            } else if (previousMode === 'countup') {
+                countupBaseSeconds = pausedCountupBase;
+                countupElapsed = pausedCountupElapsed;
+                currentMode = 'countup';
+                startTimer();
+            }
+            updateMetaUI();
+        }
+    }
+    async function fullReset() {
+        if (currentMode !== 'idle') {
+            const ok = await showConfirm('重置计时器', '重置会丢失当前进度，确定吗？');
+            if (!ok) return;
+        }
+        stopTimer();
+        currentMode = 'idle';
+        remainingSeconds = initialTotalSeconds;
+        countupBaseSeconds = 0;
+        countupElapsed = 0;
+        hasTenPercentNotified = false;
+        startTimestamp = null;
+        updateDisplay(initialTotalSeconds > 0 ? initialTotalSeconds : 0, false);
+        updateMetaUI();
+    }
+    async function setPreset(minutes, questions) {
+        if (currentMode !== 'idle') {
+            const ok = await showConfirm('运行中', '计时运行中，重置后再设定？');
+            if (ok) await fullReset();
+            else return;
+        }
+        initialTotalSeconds = minutes * 60;
+        remainingSeconds = initialTotalSeconds;
+        targetQuestions = questions;
+        currentMode = 'idle';
+        stopTimer();
+        updateDisplay(remainingSeconds, false);
+        updateMetaUI();
+        saveUserSettings(currentUser, minutes, questions);
+        showToast(`⚡ 已预设 ${minutes}分钟 / ${questions}题`);
+    }
+
+    // ---------- 用户与存储 ----------
+    function saveUserSettings(user, minutes, questions) {
+        localStorage.setItem(`userSettings_${user}`, JSON.stringify({ targetMinutes: minutes, targetQuestions: questions }));
+    }
+    function loadUserSettings(user) {
+        const raw = localStorage.getItem(`userSettings_${user}`);
+        if (raw) {
+            const { targetMinutes, targetQuestions } = JSON.parse(raw);
+            return { mins: targetMinutes, qs: targetQuestions };
+        }
+        return null;
+    }
+    function applyUserSettings(user) {
+        const settings = loadUserSettings(user);
+        let mins = 30, qs = 30;
+        if (settings) {
+            mins = settings.mins;
+            qs = settings.qs;
+        }
+        initialTotalSeconds = mins * 60;
+        remainingSeconds = initialTotalSeconds;
+        targetQuestions = qs;
+        currentMode = 'idle';
+        stopTimer();
+        updateDisplay(remainingSeconds, false);
+        updateMetaUI();
+        saveUserSettings(user, mins, qs);
+    }
+    async function switchUser(newUser) {
+        if (currentUser === newUser) return;
+        if (currentMode !== 'idle') {
+            const confirm = await showConfirm('切换用户', `当前计时进行中，切换将重置进度并加载${newUser}的预设，确定吗？`);
+            if (!confirm) return;
+            await fullReset();
+        }
+        currentUser = newUser;
+        localStorage.setItem('timerSelectedUser', currentUser);
+        document.querySelectorAll('.user-btn').forEach(btn => btn.classList.toggle('active', btn.getAttribute('data-user') === currentUser));
+        applyUserSettings(currentUser);
+        showToast(`👤 已切换至 ${currentUser}`);
+    }
+
+    // ---------- 历史记录 ----------
     function getHistoryKey(user) { return `studyHistory_${user}`; }
-    function loadHistory(user) { const raw = localStorage.getItem(getHistoryKey(user)); return raw ? JSON.parse(raw) : []; }
-    function saveHistory(user, records) { localStorage.setItem(getHistoryKey(user), JSON.stringify(records.slice(-100))); }
-    function addHistoryRecord(user, record) { const records = loadHistory(user); records.unshift(record); saveHistory(user, records); showToast(`📝 记录已保存 (${user})`); }
-    function clearAllHistory(user) { saveHistory(user, []); if(document.getElementById('historyModal').style.display === 'flex') renderHistoryModal(user); showToast(`🗑️ 已清空${user}的历史记录`); }
-    function deleteHistoryItem(user, index) { const records = loadHistory(user); records.splice(index,1); saveHistory(user, records); renderHistoryModal(user); showToast(`已删除一条记录`); }
-    function renderHistoryModal(user) { const records = loadHistory(user); const container = document.getElementById('historyListContainer'); document.getElementById('historyUserName').innerText = user; if(records.length===0) { container.innerHTML = '<div style="padding:32px;text-align:center;opacity:0.7;">✨ 暂无学习记录，开始计时吧～</div>'; return; } let html = `<table class="history-table"><thead><tr><th>日期</th><th>时长(分)</th><th>题量</th><th>平均(秒/题)</th><th></th></tr></thead><tbody>`; records.forEach((r,idx)=>{ html += `<tr><td>${r.date}</td><td>${r.durationMin}</td><td>${r.questions}</td><td>${r.avgSec}</td><td><button class="delete-record-btn" data-idx="${idx}"><i class="fas fa-trash-alt"></i></button></td></tr>`; }); html += `</tbody></table>`; container.innerHTML = html; container.querySelectorAll('.delete-record-btn').forEach(btn=>{ btn.addEventListener('click',(e)=>{ const idx = parseInt(btn.getAttribute('data-idx')); if(confirm(`删除这条记录？`)) deleteHistoryItem(user, idx); }); }); }
-    async function finishAndSave() { if (currentMode === 'idle') { showToast('暂无进行中的计时'); return; } const confirmResult = await showConfirm('结束本次练习', '确定结束并保存本次学习记录吗？'); if (!confirmResult) return; let totalElapsed = 0; const endTime = new Date(); if (currentMode === 'countdown') totalElapsed = initialTotalSeconds - remainingSeconds; else if (currentMode === 'countup') totalElapsed = countupBaseSeconds + countupElapsed; else if (currentMode === 'paused') { if (previousMode === 'countdown') totalElapsed = initialTotalSeconds - pausedRemaining; else if (previousMode === 'countup') totalElapsed = pausedCountupBase + pausedCountupElapsed; else totalElapsed = 0; } else if (currentMode === 'finished') { showToast('已经结束，请重置'); return; } if (totalElapsed < 0) totalElapsed = 0; stopTimer(); const durationMin = (totalElapsed / 60).toFixed(1); const avgSecVal = targetQuestions > 0 ? (totalElapsed / targetQuestions).toFixed(1) : '—'; const startDate = startTimestamp ? startTimestamp : new Date(); const record = { date: startDate.toLocaleDateString() + ' ' + (startTimestamp?startTimestamp.toLocaleTimeString():'--'), durationMin: durationMin, questions: targetQuestions, avgSec: avgSecVal !== '—' ? avgSecVal+'秒' : '—', fullSeconds: totalElapsed }; addHistoryRecord(currentUser, record); const encourages = ["🌟 每一分钟都算数，上岸就在前方！","💪 坚持刷题，你比想象中更优秀！","📖 公考之路，小谈小陈同行！"]; const randomEncourage = encourages[Math.floor(Math.random() * encourages.length)]; const statHtml = `<h3>📊 统计结算 · ${currentUser}</h3><div class="stat-grid"><div class="stat-row"><span>📅 日期</span><span>${startDate.toLocaleDateString()}</span></div><div class="stat-row"><span>⏱️ 总用时</span><span>${durationMin} 分钟</span></div><div class="stat-row"><span>📚 做题量</span><span>${targetQuestions} 题</span></div><div class="stat-row"><span>⚡ 平均每题</span><span>${avgSecVal !== '—' ? avgSecVal + ' 秒' : '—'}</span></div></div><div class="encourage">✨ ${randomEncourage}</div><div class="modal-buttons"><button id="closeStatBtn" class="primary">关闭</button></div>`; document.getElementById('statContent').innerHTML = statHtml; document.getElementById('statModal').style.display = 'flex'; document.getElementById('closeStatBtn').onclick = () => document.getElementById('statModal').style.display = 'none'; currentMode = 'finished'; updateDisplay(totalElapsed, false); updateMetaUI(); }
-    let confirmResolver = null; const confirmModal = document.getElementById('confirmModal'), confirmTitle = document.getElementById('confirmTitle'), confirmMessage = document.getElementById('confirmMessage'), confirmOkBtn = document.getElementById('confirmOkBtn'), confirmCancelBtn = document.getElementById('confirmCancelBtn');
-    function showConfirm(title, message) { return new Promise((resolve) => { confirmTitle.innerText = title; confirmMessage.innerText = message; confirmModal.style.display = 'flex'; confirmResolver = resolve; }); }
-    function closeConfirmModal(res) { confirmModal.style.display = 'none'; if (confirmResolver) confirmResolver(res); confirmResolver = null; }
-    confirmOkBtn.onclick = () => closeConfirmModal(true); confirmCancelBtn.onclick = () => closeConfirmModal(false);
+    function loadHistory(user) {
+        const raw = localStorage.getItem(getHistoryKey(user));
+        return raw ? JSON.parse(raw) : [];
+    }
+    function saveHistory(user, records) {
+        localStorage.setItem(getHistoryKey(user), JSON.stringify(records.slice(-100)));
+    }
+    function addHistoryRecord(user, record) {
+        const records = loadHistory(user);
+        records.unshift(record);
+        saveHistory(user, records);
+        showToast(`📝 记录已保存 (${user})`);
+    }
+    function clearAllHistory(user) {
+        saveHistory(user, []);
+        if (document.getElementById('historyModal').style.display === 'flex') renderHistoryModal(user);
+        showToast(`🗑️ 已清空${user}的历史记录`);
+    }
+    function deleteHistoryItem(user, index) {
+        const records = loadHistory(user);
+        records.splice(index, 1);
+        saveHistory(user, records);
+        renderHistoryModal(user);
+        showToast(`已删除一条记录`);
+    }
+    function renderHistoryModal(user) {
+        const records = loadHistory(user);
+        const container = document.getElementById('historyListContainer');
+        document.getElementById('historyUserName').innerText = user;
+        if (records.length === 0) {
+            container.innerHTML = '<div style="padding:32px;text-align:center;opacity:0.7;">✨ 暂无学习记录，开始计时吧～</div>';
+            return;
+        }
+        let html = `<table class="history-table"><thead><tr><th>日期</th><th>时长(分)</th><th>题量</th><th>平均(秒/题)</th><th></th></tr></thead><tbody>`;
+        records.forEach((r, idx) => {
+            html += `<tr><td>${r.date}</td><td>${r.durationMin}</td><td>${r.questions}</td><td>${r.avgSec}</td><td><button class="delete-record-btn" data-idx="${idx}"><i class="fas fa-trash-alt"></i></button></td></tr>`;
+        });
+        html += `</tbody></table>`;
+        container.innerHTML = html;
+        container.querySelectorAll('.delete-record-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const idx = parseInt(btn.getAttribute('data-idx'));
+                if (confirm(`删除这条记录？`)) deleteHistoryItem(user, idx);
+            });
+        });
+    }
+    async function finishAndSave() {
+        if (currentMode === 'idle') {
+            showToast('暂无进行中的计时');
+            return;
+        }
+        const confirmResult = await showConfirm('结束本次练习', '确定结束并保存本次学习记录吗？');
+        if (!confirmResult) return;
+        let totalElapsed = 0;
+        const endTime = new Date();
+        if (currentMode === 'countdown') totalElapsed = initialTotalSeconds - remainingSeconds;
+        else if (currentMode === 'countup') totalElapsed = countupBaseSeconds + countupElapsed;
+        else if (currentMode === 'paused') {
+            if (previousMode === 'countdown') totalElapsed = initialTotalSeconds - pausedRemaining;
+            else if (previousMode === 'countup') totalElapsed = pausedCountupBase + pausedCountupElapsed;
+            else totalElapsed = 0;
+        } else if (currentMode === 'finished') {
+            showToast('已经结束，请重置');
+            return;
+        }
+        if (totalElapsed < 0) totalElapsed = 0;
+        stopTimer();
+        const durationMin = (totalElapsed / 60).toFixed(1);
+        const avgSecVal = targetQuestions > 0 ? (totalElapsed / targetQuestions).toFixed(1) : '—';
+        const startDate = startTimestamp ? startTimestamp : new Date();
+        const record = {
+            date: startDate.toLocaleDateString() + ' ' + (startTimestamp ? startTimestamp.toLocaleTimeString() : '--'),
+            durationMin: durationMin,
+            questions: targetQuestions,
+            avgSec: avgSecVal !== '—' ? avgSecVal + '秒' : '—',
+            fullSeconds: totalElapsed
+        };
+        addHistoryRecord(currentUser, record);
+        const encourages = ["🌟 每一分钟都算数，上岸就在前方！", "💪 坚持刷题，你比想象中更优秀！", "📖 公考之路，小谈小陈同行！"];
+        const randomEncourage = encourages[Math.floor(Math.random() * encourages.length)];
+        const statHtml = `<h3>📊 统计结算 · ${currentUser}</h3><div class="stat-grid"><div class="stat-row"><span>📅 日期</span><span>${startDate.toLocaleDateString()}</span></div><div class="stat-row"><span>⏱️ 总用时</span><span>${durationMin} 分钟</span></div><div class="stat-row"><span>📚 做题量</span><span>${targetQuestions} 题</span></div><div class="stat-row"><span>⚡ 平均每题</span><span>${avgSecVal !== '—' ? avgSecVal + ' 秒' : '—'}</span></div></div><div class="encourage">✨ ${randomEncourage}</div><div class="modal-buttons"><button id="closeStatBtn" class="primary">关闭</button></div>`;
+        document.getElementById('statContent').innerHTML = statHtml;
+        document.getElementById('statModal').style.display = 'flex';
+        document.getElementById('closeStatBtn').onclick = () => document.getElementById('statModal').style.display = 'none';
+        currentMode = 'finished';
+        updateDisplay(totalElapsed, false);
+        updateMetaUI();
+    }
+
+    // ---------- 确认弹窗工具 ----------
+    let confirmResolver = null;
+    const confirmModal = document.getElementById('confirmModal');
+    const confirmTitle = document.getElementById('confirmTitle');
+    const confirmMessage = document.getElementById('confirmMessage');
+    const confirmOkBtn = document.getElementById('confirmOkBtn');
+    const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+    function showConfirm(title, message) {
+        return new Promise((resolve) => {
+            confirmTitle.innerText = title;
+            confirmMessage.innerText = message;
+            confirmModal.style.display = 'flex';
+            confirmResolver = resolve;
+        });
+    }
+    function closeConfirmModal(res) {
+        confirmModal.style.display = 'none';
+        if (confirmResolver) confirmResolver(res);
+        confirmResolver = null;
+    }
+    confirmOkBtn.onclick = () => closeConfirmModal(true);
+    confirmCancelBtn.onclick = () => closeConfirmModal(false);
     window.addEventListener('click', (e) => { if (e.target === confirmModal) closeConfirmModal(false); });
-    function initUserMemory() { const stored = localStorage.getItem('timerSelectedUser'); if (stored === '谈伟' || stored === '陈曦') currentUser = stored; document.querySelectorAll('.user-btn').forEach(btn => { btn.classList.toggle('active', btn.getAttribute('data-user') === currentUser); btn.onclick = () => switchUser(btn.getAttribute('data-user')); }); applyUserSettings(currentUser); }
-    function initTheme() { const isDark = localStorage.getItem('timerTheme') === 'dark'; document.body.classList.add(isDark ? 'dark' : 'light'); document.body.classList.remove(isDark ? 'light' : 'dark'); const toggle = document.getElementById('themeToggle'); const update = () => { const dark = document.body.classList.contains('dark'); toggle.innerHTML = dark ? '<i class="fas fa-sun"></i> <span>浅色模式</span>' : '<i class="fas fa-moon"></i> <span>深色模式</span>'; localStorage.setItem('timerTheme', dark ? 'dark' : 'light'); }; update(); toggle.onclick = () => { document.body.classList.toggle('dark'); document.body.classList.toggle('light'); update(); }; }
-    document.getElementById('inputTimeBtn').onclick = async () => { if (currentMode !== 'idle') { if(await showConfirm('运行中', '计时运行中，重置后再设定？')) await fullReset(); else return; } document.getElementById('minutesInput').value = Math.floor(initialTotalSeconds / 60) || 30; document.getElementById('questionsInput').value = targetQuestions || 30; document.getElementById('inputModal').style.display = 'flex'; };
-    document.getElementById('confirmInputBtn').onclick = () => { let mins = parseInt(document.getElementById('minutesInput').value,10) || 1; let qs = parseInt(document.getElementById('questionsInput').value,10) || 1; mins = Math.min(1440, Math.max(1, mins)); qs = Math.min(150, Math.max(1, qs)); initialTotalSeconds = mins * 60; remainingSeconds = initialTotalSeconds; targetQuestions = qs; currentMode = 'idle'; stopTimer(); updateDisplay(remainingSeconds, false); updateMetaUI(); saveUserSettings(currentUser, mins, qs); document.getElementById('inputModal').style.display = 'none'; };
+
+    // 通用toast
+    function showToast(msg) {
+        const toast = document.createElement('div');
+        toast.className = 'toast-message';
+        toast.innerText = msg;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2500);
+    }
+
+    // ---------- 初始化与事件绑定 ----------
+    function initUserMemory() {
+        const stored = localStorage.getItem('timerSelectedUser');
+        if (stored === '谈伟' || stored === '陈曦') currentUser = stored;
+        document.querySelectorAll('.user-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.getAttribute('data-user') === currentUser);
+            btn.onclick = () => switchUser(btn.getAttribute('data-user'));
+        });
+        applyUserSettings(currentUser);
+    }
+    function initTheme() {
+        const isDark = localStorage.getItem('timerTheme') === 'dark';
+        document.body.classList.add(isDark ? 'dark' : 'light');
+        document.body.classList.remove(isDark ? 'light' : 'dark');
+        const toggle = document.getElementById('themeToggle');
+        const update = () => {
+            const dark = document.body.classList.contains('dark');
+            toggle.innerHTML = dark ? '<i class="fas fa-sun"></i> <span>浅色模式</span>' : '<i class="fas fa-moon"></i> <span>深色模式</span>';
+            localStorage.setItem('timerTheme', dark ? 'dark' : 'light');
+        };
+        update();
+        toggle.onclick = () => {
+            document.body.classList.toggle('dark');
+            document.body.classList.toggle('light');
+            update();
+        };
+    }
+
+    // 按钮事件
+    document.getElementById('inputTimeBtn').onclick = async () => {
+        if (currentMode !== 'idle') {
+            if (await showConfirm('运行中', '计时运行中，重置后再设定？')) await fullReset();
+            else return;
+        }
+        document.getElementById('minutesInput').value = Math.floor(initialTotalSeconds / 60) || 30;
+        document.getElementById('questionsInput').value = targetQuestions || 30;
+        document.getElementById('inputModal').style.display = 'flex';
+    };
+    document.getElementById('confirmInputBtn').onclick = () => {
+        let mins = parseInt(document.getElementById('minutesInput').value, 10) || 1;
+        let qs = parseInt(document.getElementById('questionsInput').value, 10) || 1;
+        mins = Math.min(1440, Math.max(1, mins));
+        qs = Math.min(150, Math.max(1, qs));
+        initialTotalSeconds = mins * 60;
+        remainingSeconds = initialTotalSeconds;
+        targetQuestions = qs;
+        currentMode = 'idle';
+        stopTimer();
+        updateDisplay(remainingSeconds, false);
+        updateMetaUI();
+        saveUserSettings(currentUser, mins, qs);
+        document.getElementById('inputModal').style.display = 'none';
+    };
     document.getElementById('cancelInputBtn').onclick = () => document.getElementById('inputModal').style.display = 'none';
-    stopBtn.onclick = finishAndSave; resetBtn.onclick = fullReset; startPauseBtn.onclick = handleStartPause;
-    document.getElementById('historyBtn').onclick = () => { renderHistoryModal(currentUser); document.getElementById('historyModal').style.display = 'flex'; };
+    stopBtn.onclick = finishAndSave;
+    resetBtn.onclick = fullReset;
+    startPauseBtn.onclick = handleStartPause;
+    document.getElementById('historyBtn').onclick = () => {
+        renderHistoryModal(currentUser);
+        document.getElementById('historyModal').style.display = 'flex';
+    };
     document.getElementById('closeHistoryBtn').onclick = () => document.getElementById('historyModal').style.display = 'none';
-    document.getElementById('clearHistoryBtn').onclick = async () => { if(await showConfirm('清空历史', `确定清空${currentUser}的所有学习记录吗？`)) clearAllHistory(currentUser); };
+    document.getElementById('clearHistoryBtn').onclick = async () => {
+        if (await showConfirm('清空历史', `确定清空${currentUser}的所有学习记录吗？`)) clearAllHistory(currentUser);
+    };
     document.getElementById('voiceBtn').onclick = () => openVoiceModal();
     document.getElementById('closeVoiceBtn').onclick = () => document.getElementById('voiceModal').style.display = 'none';
-    document.querySelectorAll('.preset-btn').forEach(btn => { btn.onclick = () => setPreset(parseInt(btn.dataset.min), parseInt(btn.dataset.q)); });
-    window.addEventListener('keydown', (e) => { if (e.target.tagName === 'INPUT') return; if (e.code === 'Space') { e.preventDefault(); handleStartPause(); } else if (e.code === 'KeyR') { e.preventDefault(); fullReset(); } });
-    window.addEventListener('click', function initOnce() { initAudio(); window.removeEventListener('click', initOnce); });
-    initTheme(); initUserMemory(); initVoiceManager();
-    document.querySelectorAll('.modal').forEach(modal => { modal.addEventListener('click', (e) => { if(e.target === modal) modal.style.display = 'none'; }); });
+    document.querySelectorAll('.preset-btn').forEach(btn => {
+        btn.onclick = () => setPreset(parseInt(btn.dataset.min), parseInt(btn.dataset.q));
+    });
+    window.addEventListener('keydown', (e) => {
+        if (e.target.tagName === 'INPUT') return;
+        if (e.code === 'Space') {
+            e.preventDefault();
+            handleStartPause();
+        } else if (e.code === 'KeyR') {
+            e.preventDefault();
+            fullReset();
+        }
+    });
+    window.addEventListener('click', function initOnce() {
+        initAudio();
+        window.removeEventListener('click', initOnce);
+    });
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+    });
+
+    initTheme();
+    initUserMemory();
+    initVoiceManager();
 </script>
 </body>
 </html>
